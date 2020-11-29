@@ -1,5 +1,5 @@
 ==================================
-setuptools-build-subpackage v1.0.0
+setuptools-build-subpackage v0.1.0
 ==================================
 
 Package a subfolder as a python distribution
