@@ -1,0 +1,59 @@
+version: 2.1
+workflows:
+  test:
+    jobs:
+      - test_36
+      - test_37
+      - test_38
+      - test_39
+
+jobs:
+  test_36: &test-template
+    docker:
+      - image: circleci/python:3.6
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "setup.cfg" }}
+          - v1-dependencies-
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -e .[devel]
+
+      - save_cache:
+          paths:
+            - ./venv
+            - "~/.cache"
+          key: v1-dependencies-{{ checksum "setup.cfg" }}
+
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            mkdir test-results
+            pytest -v --cov=src/ --junitxml=test-results/junit.xml
+
+      # store artifacts (for example logs, binaries, etc)
+      # to be available in the web app or through the API
+      - store_test_results:
+          path: test-results
+
+  test_37:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.7
+
+  test_38:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.8
+
+  test_39:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.9

@@ -1,0 +1,49 @@
+[build-system]
+requires = [
+    "setuptools>=30.3.0",
+    "wheel",
+    "setuptools_scm>=4.1.2",
+]
+
+[tool.isort]
+line_length = 120
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+skip = [".eggs", "build", "dist"]
+
+
+[tool.pytest.ini_options]
+# If a pytest section is found in one of the possible config files
+# (pytest.ini, tox.ini or setup.cfg), then pytest will not look for any others,
+# so if you add a pytest config section elsewhere,
+# you will need to delete this section from setup.cfg.
+norecursedirs = [
+    ".git",
+    ".env",
+    "dist",
+    "build",
+    "migrations",
+    "docs/",
+    ".eggs",
+]
+addopts = [
+    "-ra",
+    "--isort",
+    "--black",
+    "--flake8",
+    "--strict",
+    "--ignore=docs/conf.py",
+    "--ignore=setup.py",
+    "--ignore=.eggs",
+    "--doctest-modules",
+    "--doctest-glob=\\*.rst",
+    "--tb=short",
+]
+
+[tool.black]
+py36 = true
+skip-string-normalization = true
+line_length = 120
