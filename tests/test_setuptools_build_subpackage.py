@@ -1,3 +1,4 @@
+import os
 import tarfile
 import textwrap
 from pathlib import Path
@@ -21,11 +22,16 @@ def build_dist(folder, command, output, *args):
         output,
         *args,
     ]
+    cur = os.getcwd()
+    os.chdir('example')
 
-    setuptools.setup(
-        distclass=Distribution,
-        script_args=args,
-    )
+    try:
+        setuptools.setup(
+            distclass=Distribution,
+            script_args=args,
+        )
+    finally:
+        os.chdir(cur)
 
 
 def test_bdist_wheel(tmp_path):
@@ -106,7 +112,7 @@ def test_sdist(tmp_path):
 
         setup_cfg = sdist_a.extractfile('example_sub_moudle_a-0.0.0/setup.cfg').read().decode('ascii')
 
-        assert setup_cfg == (ROOT / 'example' / 'sub_module_a' / 'setup.cfg').open(encoding='ascii').read()
+        assert setup_cfg == (ROOT / 'example' / 'example' / 'sub_module_a' / 'setup.cfg').open(encoding='ascii').read()
 
     with tarfile.open(sdist_b_path) as sdist_b:
         assert set(sdist_b.getnames()) == {
@@ -133,7 +139,7 @@ def test_sdist(tmp_path):
 
         setup_cfg = sdist_b.extractfile('example_sub_moudle_b-0.0.0/setup.cfg').read().decode('ascii')
 
-        assert setup_cfg == (ROOT / 'example' / 'sub_module_b' / 'setup.cfg').open(encoding='ascii').read()
+        assert setup_cfg == (ROOT / 'example' / 'example' / 'sub_module_b' / 'setup.cfg').open(encoding='ascii').read()
 
 
 def test_license_template(tmp_path):
