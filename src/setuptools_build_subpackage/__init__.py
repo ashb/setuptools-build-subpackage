@@ -2,7 +2,11 @@ import os
 
 from setuptools import Distribution as orig
 
-__version__ = '0.1.0'
+try:
+    from ._version import version as __version__  # noqa: F401
+except ImportError:
+    # In development
+    pass
 
 __all__ = [
     'Distribution',
